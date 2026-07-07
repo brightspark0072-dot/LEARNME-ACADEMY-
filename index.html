@@ -1479,7 +1479,7 @@
             <select id="fclass">
               <option value="">Select class</option>
               <option value="Class 8">Class 8</option>
-              <option value="Class 9">Class 9</option>
+              <option value="Calss 9">Class 9</option>
               <option value="Class 10">Class 10</option>
               <option value="Class 11 (+2 first year)">Class 11 (+2 First Year)</option>
               <option value="Class 12 (+2 final year)">Class 12 (+2 Final Year)</option>
@@ -1817,7 +1817,7 @@
     image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
     download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
     arrowRight: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
-    bug: '<rect x="8" y="6" width="8" height="14" rx="4"/><path d="M19 7l-3 2"/><path d="M5 7l3 2"/><path d="7l-3 2"/><path d="M5 7l3 2"/><path d="M19 19l-3-2"/><path d="M5 19l3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="M12 6V3"/><path d="M10 3h4"/>',
+    bug: '<rect x="8" y="6" width="8" height="14" rx="4"/><path d="M19 7l-3 2"/><path d="M5 7l3 2"/><path d="M19 19l-3-2"/><path d="M5 19l3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="M12 6V3"/><path d="M10 3h4"/>',
   };
 
   // Icons that use fill instead of stroke (brand icons)
@@ -1891,7 +1891,7 @@
   }
 
   // ── PAGE NAVIGATION ──
-  function showPage(id) {
+  function showPage(id, pushState = true) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.querySelectorAll('.nav-links a').forEach(a => {
@@ -1900,7 +1900,44 @@
     });
     window.scrollTo({top:0, behavior:'smooth'});
     document.getElementById('navLinks').classList.remove('open');
+
+    // Update browser history so back button works
+    if (pushState) {
+      history.pushState({ page: id }, '', '#' + id);
+    }
+    // Update page title
+    const titles = {
+      home: 'Home',
+      about: 'About Us',
+      courses: 'Courses',
+      results: 'Results & Toppers',
+      material: 'Study Material',
+      hostel: 'Hostel',
+      admissions: 'Admissions',
+      contact: 'Contact',
+    };
+    document.title = `${titles[id] || id} — Learn Me Academy`;
   }
+
+  // Handle browser back/forward buttons
+  window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.page) {
+      showPage(e.state.page, false); // false = don't push again
+    } else {
+      showPage('home', false);
+    }
+  });
+
+  // On first load, check URL hash
+  window.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash.replace('#', '');
+    const validPages = ['home','about','courses','results','material','hostel','admissions','contact'];
+    if (hash && validPages.includes(hash)) {
+      showPage(hash, false);
+    } else {
+      history.replaceState({ page: 'home' }, '', '#home');
+    }
+  });
 
   // ── HAMBURGER ──
   function toggleMenu(){
@@ -1981,15 +2018,14 @@
   }
 
   function validatePhone(phone) {
-    const clean = phone.replace(/[\s\-\+\(\)]/g, "");
-    if (!clean) return "Phone number is required.";
-    if (!/^\d+$/.test(clean)) return "Phone must contain only digits.";
-    if (clean.length < 10 || clean.length > 13) return "Enter a valid 10-digit phone number.";
-    // Detect all-same digit (e.g. 9999999999)
-    if (/^(\d)\1+$/.test(clean)) return "Enter a real phone number.";
-    return null;
-  }
-
+  const clean = phone.replace(/[\s\-\+\(\)]/g, "").replace(/^91/, ""); // strip +91
+  if (!clean) return "Phone number is required.";
+  if (!/^\d+$/.test(clean)) return "Phone must contain only digits.";
+  if (clean.length !== 10) return "Enter a valid 10-digit mobile number.";
+  if (/^(\d)\1+$/.test(clean)) return "Enter a real phone number.";
+  if (!/^[6-9]/.test(clean)) return "Enter a valid Indian mobile number."; // ✅ new
+  return null;
+}
   function validateEmail(email) {
     if (!email) return null; // optional field
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address.";
@@ -1997,19 +2033,19 @@
   }
  function filterClassses(){
   if (typeof clearFieldError === 'function') {
-      clearFieldError('fcourse');
+      clearAllErrors('fcourse');
   }
   const courseSelect = document.getElementById('fcourse');
   const classSelect= document.getElementById('fclass');
 
-  if(!courseSelect || !classSelect){
+  if(!courseSelect || classSelect){
     return;
   }
   const classOptions= classSelect.querySelectorAll('option');
   const selectedCourse = courseSelect.options[courseSelect.selectedIndex];
   const allowedClassesAttr = selectedCourse.getAttribute('data-allowed-classes');
 
-  if (!allowedClassesAttr) {
+  if (!allowedClassArray) {
     classOptions.forEach(option =>{
       option.style.display='block';
       option.disabled =false;
@@ -2061,7 +2097,7 @@
 
     if (!course) { showFieldError('fcourse', 'Please select a course.'); hasError = true; }
     if (!cls) { showFieldError('fclass', 'Please select your current class.'); hasError = true; }
-    if (course && cls) {
+    if (course & cls) {
       const courseSelect = document.getElementById('fcourse');
       const selectedCourseOpt = courseSelect.options[courseSelect.selectedIndex];
       const allowedClassAttr = selectedCourseOpt.getAttribute('data-allowed-classes');
@@ -2114,7 +2150,8 @@
       nav.style.background='rgba(7,9,26,0.85)';
     }
   });
-    // ══════════════════════════════════════════════════════
+
+  // ══════════════════════════════════════════════════════
   //  LMA — Dynamic Data from Google Sheets via GAS API
   // ══════════════════════════════════════════════════════
 
@@ -2309,4 +2346,3 @@
 </script>
 </body>
 </html>
-  
