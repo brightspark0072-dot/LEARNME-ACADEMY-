@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://brightspark0072-dot.github.io/LEARNME-ACADEMY-/sitemap.xml
