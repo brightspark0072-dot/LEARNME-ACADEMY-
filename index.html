@@ -2222,7 +2222,7 @@
   }
  function filterClasses(){
   if (typeof clearFieldError === 'function') {
-      clearAllErrors('fcourse');
+      clearFieldError('fcourse');
   }
   const courseSelect = document.getElementById('fcourse');
   const classSelect= document.getElementById('fclass');
@@ -2286,7 +2286,7 @@
 
     if (!course) { showFieldError('fcourse', 'Please select a course.'); hasError = true; }
     if (!cls) { showFieldError('fclass', 'Please select your current class.'); hasError = true; }
-    if (course & cls) {
+    if (course && cls) {
       const courseSelect = document.getElementById('fcourse');
       const selectedCourseOpt = courseSelect.options[courseSelect.selectedIndex];
       const allowedClassAttr = selectedCourseOpt.getAttribute('data-allowed-classes');
