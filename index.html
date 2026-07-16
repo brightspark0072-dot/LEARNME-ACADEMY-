@@ -1689,7 +1689,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>Interested Course *</label>
-            <select id="fcourse" onchange="filterClassses()">
+            <select id="fcourse" onchange="filterClasses()">
               <option value="">Select course</option>
               <option data-allowed-classes="Class 10">+2 Science — CHSE</option>
               <option data-allowed-classes="Class 10">+2 Science — CBSE</option>
@@ -1704,7 +1704,7 @@
             <select id="fclass">
               <option value="">Select class</option>
               <option value="Class 8">Class 8</option>
-              <option value="Calss 9">Class 9</option>
+              <option value="Class 9">Class 9</option>
               <option value="Class 10">Class 10</option>
               <option value="Class 11 (+2 first year)">Class 11 (+2 First Year)</option>
               <option value="Class 12 (+2 final year)">Class 12 (+2 Final Year)</option>
@@ -2220,21 +2220,21 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address.";
     return null;
   }
- function filterClassses(){
+ function filterClasses(){
   if (typeof clearFieldError === 'function') {
       clearAllErrors('fcourse');
   }
   const courseSelect = document.getElementById('fcourse');
   const classSelect= document.getElementById('fclass');
 
-  if(!courseSelect || classSelect){
+  if(!courseSelect || !classSelect){
     return;
   }
   const classOptions= classSelect.querySelectorAll('option');
   const selectedCourse = courseSelect.options[courseSelect.selectedIndex];
   const allowedClassesAttr = selectedCourse.getAttribute('data-allowed-classes');
 
-  if (!allowedClassArray) {
+  if (!allowedClassAttr) {
     classOptions.forEach(option =>{
       option.style.display='block';
       option.disabled =false;
