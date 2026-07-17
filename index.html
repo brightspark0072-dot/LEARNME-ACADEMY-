@@ -2234,15 +2234,15 @@
   const selectedCourse = courseSelect.options[courseSelect.selectedIndex];
   const allowedClassesAttr = selectedCourse.getAttribute('data-allowed-classes');
 
-  if (!allowedClassAttr) {
+  if (!allowedClassesAttr) {
     classOptions.forEach(option =>{
       option.style.display='block';
       option.disabled =false;
     });
     return;
   }
-  const allowedClasses =allowedClassesAttr.split(',');
-  let curreentSelectedIsStillValid = true;
+  const allowedClasses =allowedClassesAttr.split(',').map(s => s.trim());
+  let curreentSelectedIsStillValid = false;
 
   classOptions.forEach(option =>{
     if (option.value === "") {
@@ -2252,7 +2252,7 @@
       option.style.display='block';
       option.disabled =false;
       if (classSelect.value === option.value) {
-        
+      curreentSelectedIsStillValid = true;
       }
     }else{
       option.style.display='none';
