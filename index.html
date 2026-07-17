@@ -2292,7 +2292,7 @@
       const allowedClassAttr = selectedCourseOpt.getAttribute('data-allowed-classes');
 
       if (allowedClassAttr) {
-        const allowedClassArray =allowedClassAttr.split(',');
+        const allowedClassArray =allowedClassAttr.split(',').map(s => s.trim());
         if (!allowedClassArray.includes(cls)) {
           showFieldError('fclass' , 'Your current class is not eligible for the course. ');
           hasError= true;
